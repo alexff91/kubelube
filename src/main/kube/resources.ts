@@ -50,7 +50,10 @@ export function formatAge(timestamp?: Date | string): string {
   return `${seconds}s`;
 }
 
-function baseRow(meta: k8s.V1ObjectMeta | undefined, namespaced: boolean): Omit<ResourceRow, 'cells' | 'health'> {
+function baseRow(
+  meta: k8s.V1ObjectMeta | undefined,
+  namespaced: boolean
+): Omit<ResourceRow, 'cells' | 'health'> {
   const name = meta?.name ?? '';
   const namespace = namespaced ? (meta?.namespace ?? '') : undefined;
   return {
@@ -408,7 +411,9 @@ async function listNodes(c: Clients): Promise<ResourceList> {
     AGE
   ];
   const rows = list.items.map((n): ResourceRow => {
-    const ready = n.status?.conditions?.some((cond) => cond.type === 'Ready' && cond.status === 'True');
+    const ready = n.status?.conditions?.some(
+      (cond) => cond.type === 'Ready' && cond.status === 'True'
+    );
     const roles = Object.keys(n.metadata?.labels ?? {})
       .filter((l) => l.startsWith('node-role.kubernetes.io/'))
       .map((l) => l.replace('node-role.kubernetes.io/', ''))
