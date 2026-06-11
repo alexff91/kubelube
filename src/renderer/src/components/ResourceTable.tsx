@@ -18,10 +18,10 @@ export function ResourceTable({ kind, namespace, search, refreshTick, onSelect }
   const [error, setError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
+  // State resets on kind/namespace changes via the `key` prop set by App;
+  // refreshTick re-fetches in place so existing rows stay visible.
   useEffect(() => {
     let cancelled = false;
-    setList(null);
-    setError(null);
 
     const load = async () => {
       try {
