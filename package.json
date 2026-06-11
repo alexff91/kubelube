@@ -1,0 +1,64 @@
+{
+  "name": "kubelube",
+  "version": "0.1.0",
+  "description": "A fancy, modern, open-source Kubernetes IDE. Connect to your cluster contexts and explore workloads with style.",
+  "main": "out/main/index.js",
+  "author": "kubelube contributors",
+  "license": "MIT",
+  "homepage": "https://github.com/alexff91/kubelube",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexff91/kubelube.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alexff91/kubelube/issues"
+  },
+  "keywords": [
+    "kubernetes",
+    "k8s",
+    "dashboard",
+    "ide",
+    "electron",
+    "lens",
+    "devops"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "package": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:linux": "npm run build && electron-builder --linux"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^1.3.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.0",
+    "electron-vite": "^3.1.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "prettier": "^3.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vite": "^6.0.0"
+  }
+}
