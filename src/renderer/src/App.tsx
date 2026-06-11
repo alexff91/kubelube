@@ -135,6 +135,7 @@ export function App() {
             <Overview refreshTick={refreshTick} onNavigate={setView} />
           ) : (
             <ResourceTable
+              key={`${view}:${namespace}`}
               kind={view}
               namespace={showNamespaceFilter ? namespace : undefined}
               search={search}
@@ -146,6 +147,7 @@ export function App() {
       </div>
       {selected && (
         <Drawer
+          key={`${selected.kind}/${selected.namespace ?? ''}/${selected.name}`}
           selection={selected}
           onClose={() => setSelected(null)}
           onChanged={refresh}

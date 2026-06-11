@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { PodDetail, ResourceKind } from '@shared/types';
 import { kube, unwrap } from '../api';
 import { Icon } from './Icon';
@@ -172,7 +172,6 @@ function YamlView({
 
   useEffect(() => {
     let cancelled = false;
-    setYaml(null);
     void unwrap(kube.getResourceYaml(selection.kind, selection.name, selection.namespace))
       .then((y) => !cancelled && setYaml(y))
       .catch((err) => !cancelled && setError(err instanceof Error ? err.message : String(err)));
@@ -212,6 +211,7 @@ function LogsView({ selection }: { selection: Selection }) {
   const [logs, setLogs] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -228,31 +228,34 @@ function LogsView({ selection }: { selection: Selection }) {
     };
   }, [selection]);
 
-  const load = useCallback(async () => {
-    if (!container) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const text = await unwrap(
-        kube.getPodLogs({
-          namespace: selection.namespace ?? '',
-          pod: selection.name,
-          container,
-          tailLines,
-          previous
-        })
-      );
-      setLogs(text);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [selection, container, tailLines, previous]);
-
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!container) return;
+    let cancelled = false;
+    void unwrap(
+      kube.getPodLogs({
+        namespace: selection.namespace ?? '',
+        pod: selection.name,
+        container,
+        tailLines,
+        previous
+      })
+    )
+      .then((text) => {
+        if (!cancelled) {
+          setLogs(text);
+          setError(null);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selection, container, tailLines, previous, reloadNonce]);
 
   return (
     <>
@@ -289,7 +292,14 @@ function LogsView({ selection }: { selection: Selection }) {
           />
           previous
         </label>
-        <button className="btn" onClick={() => void load()} disabled={loading}>
+        <button
+          className="btn"
+          onClick={() => {
+            setLoading(true);
+            setReloadNonce((n) => n + 1);
+          }}
+          disabled={loading}
+        >
           <Icon name="refresh" /> {loading ? 'Loading…' : 'Refresh'}
         </button>
       </div>

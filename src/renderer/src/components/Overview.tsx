@@ -17,8 +17,6 @@ export function Overview({ refreshTick, onNavigate }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    setData(null);
-    setError(null);
 
     const load = async () => {
       try {
