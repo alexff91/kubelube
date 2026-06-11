@@ -1,0 +1,48 @@
+name: Bug report
+description: Something isn't working
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Connect to context '…'
+        2. Open the Pods view
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Kubelube version
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: k8s
+    attributes:
+      label: Kubernetes distribution & version
+      placeholder: e.g. EKS 1.31, kind 0.27, minikube …
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      render: shell
