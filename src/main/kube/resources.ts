@@ -265,19 +265,17 @@ async function listCronJobs(c: Clients, namespace?: string): Promise<ResourceLis
     { key: 'lastSchedule', label: 'Last schedule' },
     AGE
   ];
-  const rows = list.items.map(
-    (cj): ResourceRow => ({
-      ...baseRow(cj.metadata, true),
-      cells: {
-        schedule: cj.spec?.schedule ?? '',
-        suspend: cj.spec?.suspend ? 'true' : 'false',
-        active: String(cj.status?.active?.length ?? 0),
-        lastSchedule: formatAge(cj.status?.lastScheduleTime),
-        age: formatAge(cj.metadata?.creationTimestamp)
-      },
-      health: cj.spec?.suspend ? 'warn' : 'ok'
-    })
-  );
+  const rows = list.items.map((cj): ResourceRow => ({
+    ...baseRow(cj.metadata, true),
+    cells: {
+      schedule: cj.spec?.schedule ?? '',
+      suspend: cj.spec?.suspend ? 'true' : 'false',
+      active: String(cj.status?.active?.length ?? 0),
+      lastSchedule: formatAge(cj.status?.lastScheduleTime),
+      age: formatAge(cj.metadata?.creationTimestamp)
+    },
+    health: cj.spec?.suspend ? 'warn' : 'ok'
+  }));
   return { kind: 'cronjobs', columns, rows };
 }
 
@@ -291,20 +289,18 @@ async function listServices(c: Clients, namespace?: string): Promise<ResourceLis
     { key: 'ports', label: 'Ports' },
     AGE
   ];
-  const rows = list.items.map(
-    (s): ResourceRow => ({
-      ...baseRow(s.metadata, true),
-      cells: {
-        type: s.spec?.type ?? '',
-        clusterIP: s.spec?.clusterIP ?? '',
-        ports: (s.spec?.ports ?? [])
-          .map((p) => `${p.port}${p.nodePort ? `:${p.nodePort}` : ''}/${p.protocol ?? 'TCP'}`)
-          .join(', '),
-        age: formatAge(s.metadata?.creationTimestamp)
-      },
-      health: 'none'
-    })
-  );
+  const rows = list.items.map((s): ResourceRow => ({
+    ...baseRow(s.metadata, true),
+    cells: {
+      type: s.spec?.type ?? '',
+      clusterIP: s.spec?.clusterIP ?? '',
+      ports: (s.spec?.ports ?? [])
+        .map((p) => `${p.port}${p.nodePort ? `:${p.nodePort}` : ''}/${p.protocol ?? 'TCP'}`)
+        .join(', '),
+      age: formatAge(s.metadata?.creationTimestamp)
+    },
+    health: 'none'
+  }));
   return { kind: 'services', columns, rows };
 }
 
@@ -317,17 +313,15 @@ async function listIngresses(c: Clients, namespace?: string): Promise<ResourceLi
     { key: 'hosts', label: 'Hosts' },
     AGE
   ];
-  const rows = list.items.map(
-    (i): ResourceRow => ({
-      ...baseRow(i.metadata, true),
-      cells: {
-        class: i.spec?.ingressClassName ?? '',
-        hosts: (i.spec?.rules ?? []).map((r) => r.host ?? '*').join(', '),
-        age: formatAge(i.metadata?.creationTimestamp)
-      },
-      health: 'none'
-    })
-  );
+  const rows = list.items.map((i): ResourceRow => ({
+    ...baseRow(i.metadata, true),
+    cells: {
+      class: i.spec?.ingressClassName ?? '',
+      hosts: (i.spec?.rules ?? []).map((r) => r.host ?? '*').join(', '),
+      age: formatAge(i.metadata?.creationTimestamp)
+    },
+    health: 'none'
+  }));
   return { kind: 'ingresses', columns, rows };
 }
 
@@ -336,16 +330,14 @@ async function listConfigMaps(c: Clients, namespace?: string): Promise<ResourceL
     ? await c.core.listNamespacedConfigMap({ namespace })
     : await c.core.listConfigMapForAllNamespaces();
   const columns: ResourceColumn[] = [{ key: 'keys', label: 'Keys' }, AGE];
-  const rows = list.items.map(
-    (cm): ResourceRow => ({
-      ...baseRow(cm.metadata, true),
-      cells: {
-        keys: String(Object.keys(cm.data ?? {}).length + Object.keys(cm.binaryData ?? {}).length),
-        age: formatAge(cm.metadata?.creationTimestamp)
-      },
-      health: 'none'
-    })
-  );
+  const rows = list.items.map((cm): ResourceRow => ({
+    ...baseRow(cm.metadata, true),
+    cells: {
+      keys: String(Object.keys(cm.data ?? {}).length + Object.keys(cm.binaryData ?? {}).length),
+      age: formatAge(cm.metadata?.creationTimestamp)
+    },
+    health: 'none'
+  }));
   return { kind: 'configmaps', columns, rows };
 }
 
@@ -359,17 +351,15 @@ async function listSecrets(c: Clients, namespace?: string): Promise<ResourceList
     AGE
   ];
   // Secret values intentionally never leave the main process; only metadata is listed.
-  const rows = list.items.map(
-    (s): ResourceRow => ({
-      ...baseRow(s.metadata, true),
-      cells: {
-        type: s.type ?? '',
-        keys: String(Object.keys(s.data ?? {}).length),
-        age: formatAge(s.metadata?.creationTimestamp)
-      },
-      health: 'none'
-    })
-  );
+  const rows = list.items.map((s): ResourceRow => ({
+    ...baseRow(s.metadata, true),
+    cells: {
+      type: s.type ?? '',
+      keys: String(Object.keys(s.data ?? {}).length),
+      age: formatAge(s.metadata?.creationTimestamp)
+    },
+    health: 'none'
+  }));
   return { kind: 'secrets', columns, rows };
 }
 
@@ -463,19 +453,17 @@ async function listEvents(c: Clients, namespace?: string): Promise<ResourceList>
     const tb = new Date(b.lastTimestamp ?? b.metadata?.creationTimestamp ?? 0).getTime();
     return tb - ta;
   });
-  const rows = sorted.map(
-    (e): ResourceRow => ({
-      ...baseRow(e.metadata, true),
-      cells: {
-        type: e.type ?? '',
-        reason: e.reason ?? '',
-        object: `${e.involvedObject?.kind ?? ''}/${e.involvedObject?.name ?? ''}`,
-        message: e.message ?? '',
-        lastSeen: formatAge(e.lastTimestamp ?? e.metadata?.creationTimestamp)
-      },
-      health: e.type === 'Warning' ? 'warn' : 'none'
-    })
-  );
+  const rows = sorted.map((e): ResourceRow => ({
+    ...baseRow(e.metadata, true),
+    cells: {
+      type: e.type ?? '',
+      reason: e.reason ?? '',
+      object: `${e.involvedObject?.kind ?? ''}/${e.involvedObject?.name ?? ''}`,
+      message: e.message ?? '',
+      lastSeen: formatAge(e.lastTimestamp ?? e.metadata?.creationTimestamp)
+    },
+    health: e.type === 'Warning' ? 'warn' : 'none'
+  }));
   return { kind: 'events', columns, rows };
 }
 
