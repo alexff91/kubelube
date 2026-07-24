@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "description": "A fancy, modern, open-source Kubernetes IDE. Connect to your cluster contexts and explore workloads with style.",
   "main": "out/main/index.js",
-  "author": "kubelube contributors",
+  "author": {
+    "name": "kubelube contributors",
+    "email": "alexff91@gmail.com"
+  },
   "license": "MIT",
   "homepage": "https://github.com/alexff91/kubelube",
   "repository": {
